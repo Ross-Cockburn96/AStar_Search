@@ -97,7 +97,6 @@ public class AStar extends JFrame implements KeyListener {
             System.out.println("Goal node reached, goal node is  " + currentNode);
             //stop search and update the gui
             reconstructPath(currentNode);
-            dc.setAllCaves(caves);
             dc.repaint();
             return;
         }
@@ -111,12 +110,10 @@ public class AStar extends JFrame implements KeyListener {
         System.out.println("Open List contains " + openList);
         closedList.add(currentNode);
         System.out.println("Closed List contains " + closedList);
-        List<Cave> neighbours = neighbourFinder(currentNode);   //put all the neighbours of the current node into a list
         double neighbourScore;
-
-        for (Cave neighbour : neighbours) { //loop iterating through each of the neighbours
+        System.out.println("This node has neighbours " + currentNode.getNeighbours());
+        for (Cave neighbour : currentNode.getNeighbours()) { //loop iterating through each of the neighbours
             System.out.println("analyising Neighour " + neighbour);
-            currentNode.addNeighbour(neighbour); //add each neighbour to the list of neighbours held in the cave datatype
             if (closedList.contains(neighbour)) {   //if the neighbour node has already been evaluated then skip to next neighbour
                 continue;
             }
@@ -129,7 +126,7 @@ public class AStar extends JFrame implements KeyListener {
                 continue;
             }
             //after we have found a better path we record the new lowest scores.
-            System.out.println("This neighbour is the best choice, adding neighbour " + neighbour + " to path");
+            System.out.println("This neighbour is a better choice, adding neighbour " + neighbour + " to path");
             parentMap.put(neighbour, currentNode);
             gscore.put(neighbour, neighbourScore);
             fscore.put(neighbour, gscore.get(neighbour) + hscore.get(neighbour));
@@ -137,7 +134,7 @@ public class AStar extends JFrame implements KeyListener {
         //at the end of one search cycle we repaint the gui
 
         reconstructPath(currentNode);
-        dc.setAllCaves(caves);
+
         dc.repaint();
     }
     private Cave lowestFScore(){    //method that returns the node that is in the openList with the lowest FScore
@@ -200,23 +197,18 @@ public class AStar extends JFrame implements KeyListener {
         gscore = new HashMap<>();
         fscore = new HashMap<>();
         parentMap = new HashMap<>();
-
-        for (Cave c : caves){   //every cave should start with a gscore and fscore with a really high number because the aim is the find the minimum score for each node.
-            gscore.put(c, Double.MAX_VALUE);
-            fscore.put(c, Double.MAX_VALUE);
+        dc.setAllCaves(caves);
+        connectivityMatrix = connectivityMatrixCalc();
+        for (Cave c1 : caves){   //every cave should start with a gscore and fscore with a really high number because the aim is the find the minimum score for each node.
+            gscore.put(c1, Double.MAX_VALUE);
+            fscore.put(c1, Double.MAX_VALUE);
+            for (Cave c2 : neighbourFinder(c1)){    //initialises each cave's neighbours
+                c1.addNeighbour(c2);
+            }
         }
         gscore.put(caves.get(0), (double)0); //the first cave always has a gscore of 0
         fscore.put(caves.get(0), hscore.get(caves.get(0))); //the first cave's score is the hscore of the node only.
-
-        connectivityMatrix = connectivityMatrixCalc();
-        for (int row =0; row < caves.size(); row ++){
-            for (int column = 0; column < caves.size(); column++){
-                if (connectivityMatrix[row][column] == true){
-                    System.out.println("Caves "+ caves.get(row) + " and "+ caves.get(column) + " are connected");
-                }
-            }
-            System.out.println("Neighbours of cave "+ caves.get(row) + " are " + neighbourFinder(caves.get(row)));
-        }
+        
 
         openList = new ArrayList<>();
         closedList = new ArrayList<>();
@@ -250,9 +242,9 @@ public class AStar extends JFrame implements KeyListener {
         for (int point = (noOfCaves * 2) + 1; point < cavContents.length; point++) {
             //Work through the array
 
-            if (cavContents[point].equals("1"))
+            if (cavContents[point].equals("1")) {
                 connected[row][col] = true;
-            else
+            }else
                 connected[row][col] = false;
 
             row++;

@@ -1,4 +1,3 @@
-import com.sun.xml.internal.bind.v2.runtime.Coordinator;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +15,6 @@ public class GUI extends JComponent{
         g2 = (Graphics2D) g;
         g2.setColor(Color.RED);
         g2.fill(new Rectangle(30,60,20,10));
-        System.out.println("rectangle dawn");
         g2.drawString("Paths not taken", 60,70);
         g2.setColor(Color.BLUE);
         g2.fill(new Rectangle(30,90,20,10));
