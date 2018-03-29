@@ -88,10 +88,15 @@ public class AStar extends JFrame implements KeyListener {
         System.out.println("\n<<< Current Node is: " + currentNode + " >>> \n");
 
         if (currentNode.equals(goalCave)) {     //if the solution is found then draw the path solution
+            double distance = 0;
             finished = true;
             System.out.println("Goal node reached, goal node is  " + currentNode);
             //stop search and update the gui
             reconstructPath(currentNode);
+            for (int i =0; i < total_path.size()-1; i++){
+                distance += euclideanDistance(total_path.get(i), total_path.get(i+1));
+            }
+            System.out.println("total distance of route is  " + distance);
             dc.repaint();
             return;
         }
@@ -180,6 +185,7 @@ public class AStar extends JFrame implements KeyListener {
             currentNode = parentMap.get(currentNode);
             total_path.add(currentNode);
         }
+
     }
 
     private void setUp(String cavFile){ //initialise variables when program is executed
