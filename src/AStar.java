@@ -1,20 +1,14 @@
 import javax.swing.*;
-import javax.tools.Tool;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.Scanner;
 
+//This is the main class of the program. It contains the search algorithm and initialises the gui
 
-/**
- * Created by rosss on 05/03/2018.
- */
 public class AStar extends JFrame implements KeyListener {
     private static int FASTEST = 0; //this represents a setting to run the search from start to finish without stopping
     private static int STEP = 1;    //this represents a setting to run the search step by step
@@ -66,6 +60,7 @@ public class AStar extends JFrame implements KeyListener {
 
 
         } catch (IOException e) {
+            System.out.println("file tried was " + filename);
             e.printStackTrace();
 
         }
@@ -160,8 +155,7 @@ public class AStar extends JFrame implements KeyListener {
 
     }
     private boolean areConnected(int cave1, int cave2) {
-        boolean areConnected = connectivityMatrix[cave1 ][cave2 ];
-        return areConnected;
+        return connectivityMatrix[cave1 ][cave2 ];
     }
     private void reconstructPath(Cave currentNode){ //method takes a node and retraces the route from that node back to the start.
         if(!total_path.isEmpty()){
@@ -208,7 +202,7 @@ public class AStar extends JFrame implements KeyListener {
         }
         gscore.put(caves.get(0), (double)0); //the first cave always has a gscore of 0
         fscore.put(caves.get(0), hscore.get(caves.get(0))); //the first cave's score is the hscore of the node only.
-        
+
 
         openList = new ArrayList<>();
         closedList = new ArrayList<>();
@@ -256,17 +250,31 @@ public class AStar extends JFrame implements KeyListener {
         return connected;
     }
 
-    public static void main(String [] args){
+    public static void main(String [] args)throws FileNotFoundException{
+        boolean fileCorrect = false;
         AStar aStar;
-
-        if (Objects.equals(args[0], "fastest")){
-            aStar =  new AStar(FASTEST, args[1]);
+        Scanner scan = new Scanner(System.in);
+        System.out.println("enter mode ass either 'step' or 'fastest' and the .cav file that is to be read e.g 'input1.cav'");
+        String mode = scan.next();
+        String file = scan.next();
+        while(!fileCorrect) {
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                fileCorrect = true;
+            } catch (FileNotFoundException e) {
+                System.out.println("File " + file + " was not found in location " + new File(".").getAbsolutePath() + " Enter another .cav file to try again");
+                file = new Scanner(System.in).next();
+                fileCorrect = false;
+            }
         }
-        if (Objects.equals(args[0], "step")) {
-            aStar = new AStar(STEP, args[1]);
-        }else{
-            System.out.println("Mode " + args[0] + " not valid, running as default - fastest mode");
-            aStar = new AStar(FASTEST, args[1]);
+        if (mode.equals("fastest")) {
+            aStar = new AStar(FASTEST, file);
+        }
+        if (mode.equals("step")) {
+            aStar = new AStar(STEP, file);
+        } else {
+            System.out.println("Mode " + mode + " not valid, running as default - fastest mode");
+            aStar = new AStar(FASTEST, file);
         }
         AStar finalAStar = aStar;
         SwingUtilities.invokeLater(new Runnable() {
@@ -290,7 +298,7 @@ public class AStar extends JFrame implements KeyListener {
 
     public void keyPressed(KeyEvent e){ //when the Enter key is pressed the search goes to the next state
         int keyCode = e.getKeyCode();
-        if(keyCode == KeyEvent.VK_ENTER && finished == false){
+        if(keyCode == KeyEvent.VK_ENTER && !finished){
             search();
         }
     }

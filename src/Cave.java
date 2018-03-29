@@ -1,9 +1,8 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-/**
- * Created by rosss on 05/03/2018.
- */
+
+//this class decides what colour the cave should be and draws the calls the paint method of the cave's neighbouring arrows
 
 public class Cave {
     private int xcoord;

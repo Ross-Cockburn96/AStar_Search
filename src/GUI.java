@@ -4,9 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by rosss on 11/03/2018.
- */
+//This class draws the key and calls the paint method of every cave
 public class GUI extends JComponent{
     private Graphics2D g2;
     private List<Cave> allCaves = new ArrayList<>();

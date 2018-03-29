@@ -3,9 +3,7 @@ import java.awt.*;
 
 import static java.lang.Math.abs;
 
-/**
- * Created by rosss on 14/03/2018.
- */
+//this class draws the arrow and decides its colour
 public class Arrow {
     private Cave from;
     private Cave to;
